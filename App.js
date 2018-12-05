@@ -5,8 +5,6 @@ import WebRTC from 'react-native-webrtc';
 import { Alert } from 'react-native';
 
 // Alert.alert(WebRTC)
-alert('test')
-
 
 var {
   RTCPeerConnection,
@@ -50,9 +48,11 @@ export default class App extends React.Component {
          const sourceInfo = sourceInfos[i];
          if(sourceInfo.kind == "video" && sourceInfo.facing == (isFront ? "front" : "back")) {
            videoSourceId = sourceInfo.id;
+           console.log(videoSourceId)
          }
        }
-      
+     
+     console.log('getUserMedia') 
      getUserMedia({
        audio: true,
        video: {
@@ -67,16 +67,18 @@ export default class App extends React.Component {
      }, function (stream) {
        console.log('dddd', stream);
        callback(stream);
-     }, logError);
+     }, (err)=>{console.log('error: '+err)});
    });
 
    pc.createOffer(function(desc) {
      pc.setLocalDescription(desc, function () {
+      console.log('pc.setLocalDescription')
   //      // Send pc.localDescription to peer
      }, function(e) {});
    }, function(e) {});
 
    pc.onicecandidate = function (event) {
+      console.log('pc.onicecandidate')
   //    // send event.candidate to peer
    };
 
@@ -90,11 +92,9 @@ export default class App extends React.Component {
   }
 
   playDrawing = (canvas, mousePositionArray, mousePosIdx) => {
-    console.log(`mousePosIdx: ${mousePosIdx}, mousePositionArray.length ${mousePositionArray.length}`)
     if (mousePositionArray.length < 2) {
       return
     }
-    console.log(mousePositionArray)
     let ctx = canvas.getContext('2d')
     let lastMousePos = mousePositionArray[mousePosIdx-1]
     let mousePos = mousePositionArray[mousePosIdx]
@@ -119,7 +119,6 @@ export default class App extends React.Component {
       , mouseUp: mouseUpBool
       , color: this.currentStrokeColor 
     })
-    console.log('setting state in getAndStoreMousePos')
     this.setState({
       portraitHistory: newPH
       , mousePosIdx: this.state.mousePosIdx+1
