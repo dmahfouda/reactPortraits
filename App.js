@@ -25,6 +25,7 @@ export default class App extends React.Component {
       , mouseDown: false
       , lastMousePos: null
       , mousePosIdx: -1
+      , videoURL: null
       , portraitHistory: {
           mousePositionArray: []
         }
@@ -33,8 +34,16 @@ export default class App extends React.Component {
     console.log('in constructor')
   }
 
+  displayVideo = (stream) => {
+    this.setState({videoURL: stream.toURL()})
+    console.log('videoURL: '+this.state.videoURL)
+    console.log('should have displayed video')
+  }
+
   rtc = () => {
-    var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+    // var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+    var configuration = {key:'peerjs', port:9000, host:'10.0.20.109', path: '/api', debug:1, 'peerIdentity':12}
+    //var configuration = {"iceServers": [{"url": "10.0.20.109:9000/api"}], "peerIdentity":12}
     var pc = new RTCPeerConnection(configuration)
 
     // var configuration = {"iceServers": [{"url": "turn:localhost:9000/api",}], "peerIdentity":12}
@@ -64,9 +73,9 @@ export default class App extends React.Component {
          facingMode: (isFront ? "user" : "environment"),
          optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
        }
-     }, function (stream) {
+     }, stream => {
        console.log('dddd', stream);
-       callback(stream);
+       this.displayVideo(stream);
      }, (err)=>{console.log('error: '+err)});
    });
 
@@ -150,6 +159,7 @@ export default class App extends React.Component {
     if (this.state.canvas) {
       this.playDrawing(this.state.canvas, this.state.portraitHistory.mousePositionArray, this.state.mousePosIdx)
     }
+    console.log('rerender')
     return (
       <View 
         onStartShouldSetResponder={()=>true}
@@ -158,6 +168,7 @@ export default class App extends React.Component {
         onResponderRelease={this.mouseUpListener}
         onResponderTerminationRequest={(evt) => true}
       >
+        <RTCView style={{background:'gray', width:100, height: 100}} streamURL={this.state.videoURL}/>
         <Text>Dont open up App.js to start working on your app!</Text>
         <Canvas ref={this.handleCanvas}/>
       </View>
