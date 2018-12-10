@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Canvas from 'react-native-canvas';
-import WebRTC from 'react-native-webrtc';
-import { Alert } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import Canvas from 'react-native-canvas'
+import WebRTC from 'react-native-webrtc'
+import * as peerjs from './peer.js'
 
 // Alert.alert(WebRTC)
 
@@ -15,6 +15,13 @@ var {
   MediaStreamTrack,
   getUserMedia,
 } = WebRTC;
+
+var {
+  Peer
+} = peerjs
+
+console.log('peerjs')
+console.log(peerjs)
 
 export default class App extends React.Component {
   constructor(props){
@@ -30,6 +37,7 @@ export default class App extends React.Component {
           mousePositionArray: []
         }
     }
+    let peer = this.initializePeer(19);
     this.rtc()
     console.log('in constructor')
   }
@@ -40,15 +48,31 @@ export default class App extends React.Component {
     console.log('should have displayed video')
   }
 
+  initializePeer = (id) => {
+     let peer
+     //let productionServer = window.location.hostname.indexOf('localhost') === -1
+     if (false) {
+       peer = new Peer(id, {key:'peerjs', port:443, host:'sleepy-earth-42956.herokuapp.com', path: '/api', debug:1})
+     } else {
+       console.log('Peer')
+       console.log(Peer)
+       peer = new Peer(id, {key:'peerjs', port:9000, host:'localhost', path: '/api', debug:3})
+     }
+     console.log(peer)
+     return peer
+   }
+
   rtc = () => {
     // var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
     var configuration = {key:'peerjs', port:9000, host:'10.0.20.109', path: '/api', debug:1, 'peerIdentity':12}
     //var configuration = {"iceServers": [{"url": "10.0.20.109:9000/api"}], "peerIdentity":12}
     var pc = new RTCPeerConnection(configuration)
+    console.log('pc')
+    console.log(pc)
 
     // var configuration = {"iceServers": [{"url": "turn:localhost:9000/api",}], "peerIdentity":12}
     //  // peer = new Peer(id, {key:'peerjs', port:9000, host:'localhost', path: '/api', debug:3})
-    
+
      let isFront = true;
      MediaStreamTrack.getSources(sourceInfos => {
        console.log(sourceInfos);
@@ -60,8 +84,8 @@ export default class App extends React.Component {
            console.log(videoSourceId)
          }
        }
-     
-     console.log('getUserMedia') 
+
+     console.log('getUserMedia')
      getUserMedia({
        audio: true,
        video: {
@@ -92,7 +116,7 @@ export default class App extends React.Component {
    };
 
   }
-  
+
   handleCanvas = (canvas) => {
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = 'purple';
@@ -119,14 +143,14 @@ export default class App extends React.Component {
       this.playDrawing(canvas, mousePositionArray, mousePosIdx + 1)
     }
   }
-  
+
   getAndStoreMousePos = (evt, mouseUpBool) => {
     let newPH = this.state.portraitHistory
     newPH.mousePositionArray.push({
       x: evt.nativeEvent.locationX
       , y: evt.nativeEvent.locationY
       , mouseUp: mouseUpBool
-      , color: this.currentStrokeColor 
+      , color: this.currentStrokeColor
     })
     this.setState({
       portraitHistory: newPH
@@ -135,7 +159,7 @@ export default class App extends React.Component {
     return {
       x: evt.nativeEvent.locationX
       , y: evt.nativeEvent.locationY
-      , mouseUp: mouseUpBool    
+      , mouseUp: mouseUpBool
     }
   }
 
@@ -155,13 +179,20 @@ export default class App extends React.Component {
     this.getAndStoreMousePos(evt, true)
   }
 
+  componentDidMount () {
+       const script = document.createElement("script");
+       script.src = "https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js";
+       script.async = true;
+       document.body.appendChild(script);
+   }
+
   render() {
     if (this.state.canvas) {
       this.playDrawing(this.state.canvas, this.state.portraitHistory.mousePositionArray, this.state.mousePosIdx)
     }
     console.log('rerender')
     return (
-      <View 
+      <View
         onStartShouldSetResponder={()=>true}
         onResponderStart={this.mouseDownListener}
         onResponderMove={this.mouseMoveListener}
