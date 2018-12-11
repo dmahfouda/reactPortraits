@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Canvas from 'react-native-canvas'
 import WebRTC from 'react-native-webrtc'
-import * as peerjs from './peer.js'
+// import * as peerjs from './peer.js'
 
 // Alert.alert(WebRTC)
 
@@ -16,12 +16,12 @@ var {
   getUserMedia,
 } = WebRTC;
 
-var {
-  Peer
-} = peerjs
+// var {
+//   Peer
+// } = peerjs
 
-console.log('peerjs')
-console.log(peerjs)
+// console.log('peerjs')
+// console.log(peerjs)
 
 export default class App extends React.Component {
   constructor(props){
@@ -37,7 +37,7 @@ export default class App extends React.Component {
           mousePositionArray: []
         }
     }
-    let peer = this.initializePeer(19);
+    // let peer = this.initializePeer(19);
     this.rtc()
     console.log('in constructor')
   }
@@ -48,23 +48,23 @@ export default class App extends React.Component {
     console.log('should have displayed video')
   }
 
-  initializePeer = (id) => {
-     let peer
-     //let productionServer = window.location.hostname.indexOf('localhost') === -1
-     if (false) {
-       peer = new Peer(id, {key:'peerjs', port:443, host:'sleepy-earth-42956.herokuapp.com', path: '/api', debug:1})
-     } else {
-       console.log('Peer')
-       console.log(Peer)
-       peer = new Peer(id, {key:'peerjs', port:9000, host:'localhost', path: '/api', debug:3})
-     }
-     console.log(peer)
-     return peer
-   }
+  // initializePeer = (id) => {
+  //    let peer
+  //    //let productionServer = window.location.hostname.indexOf('localhost') === -1
+  //    if (false) {
+  //      peer = new Peer(id, {key:'peerjs', port:443, host:'sleepy-earth-42956.herokuapp.com', path: '/api', debug:1})
+  //    } else {
+  //      console.log('Peer')
+  //      console.log(Peer)
+  //      peer = new Peer(id, {key:'peerjs', port:9000, host:'localhost', path: '/api', debug:3})
+  //    }
+  //    console.log(peer)
+  //    return peer
+  //  }
 
   rtc = () => {
-    // var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
-    var configuration = {key:'peerjs', port:9000, host:'10.0.20.109', path: '/api', debug:1, 'peerIdentity':12}
+    var configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+    // var configuration = {key:'peerjs', port:9000, host:'10.0.20.109', path: '/api', debug:1, 'peerIdentity':12}
     //var configuration = {"iceServers": [{"url": "10.0.20.109:9000/api"}], "peerIdentity":12}
     var pc = new RTCPeerConnection(configuration)
     console.log('pc')
@@ -179,12 +179,12 @@ export default class App extends React.Component {
     this.getAndStoreMousePos(evt, true)
   }
 
-  componentDidMount () {
-       const script = document.createElement("script");
-       script.src = "https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js";
-       script.async = true;
-       document.body.appendChild(script);
-   }
+  // componentDidMount () {
+  //      const script = document.createElement("script");
+  //      // script.src = "https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js";
+  //      script.async = true;
+  //      document.body.appendChild(script);
+  //  }
 
   render() {
     if (this.state.canvas) {
